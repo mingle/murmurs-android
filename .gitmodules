@@ -1,0 +1,3 @@
+[submodule "murmurs-xstream"]
+	path = murmurs-xstream
+	url = git@github.com:ThoughtWorksStudios/murmurs-xstream.git
