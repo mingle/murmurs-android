@@ -1,4 +1,6 @@
 murmurs-android
 ===============
 
-mingle murmurs android app
+[mingle](http://getmingle.io) murmurs android app
+
+a reboot of the original one
