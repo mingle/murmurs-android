@@ -1,3 +1,6 @@
 [submodule "murmurs-xstream"]
 	path = murmurs-xstream
 	url = git@github.com:ThoughtWorksStudios/murmurs-xstream.git
+[submodule "lychee"]
+	path = lychee
+	url = git@github.com:rearadmiral/lychee.git

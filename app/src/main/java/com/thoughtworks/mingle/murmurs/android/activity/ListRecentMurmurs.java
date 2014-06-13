@@ -2,8 +2,10 @@ package com.thoughtworks.mingle.murmurs.android.activity;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,8 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
-import com.thoughtworks.mingle.murmurs.android.MurmursCursorLoader;
+import com.thoughtworks.android.MatrixCursorLoader;
 import com.thoughtworks.mingle.murmurs.android.R;
+import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
 
 
 public class ListRecentMurmurs extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -34,6 +37,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
 
         this.cursorAdapter = new SimpleCursorAdapter(this, R.layout.activity_list_recent_murmurs, null, null, null, 0);
         setListAdapter(this.cursorAdapter);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -57,7 +61,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new MurmursCursorLoader(this.getApplicationContext());
+        return new MatrixCursorLoader(this.getApplicationContext(), new PaginatedMurmursCursor());
     }
 
     @Override
