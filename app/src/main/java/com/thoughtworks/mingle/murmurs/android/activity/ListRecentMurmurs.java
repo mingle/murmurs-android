@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
+import com.dephillipsdesign.logomatic.LogOMatic;
+import com.dephillipsdesign.logomatic.Logger;
 import com.thoughtworks.android.MatrixCursorLoader;
 import com.thoughtworks.mingle.murmurs.android.R;
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
@@ -20,7 +22,10 @@ import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
 
 public class ListRecentMurmurs extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final Logger log = LogOMatic.getLogger(ListRecentMurmurs.class);
+
     private SimpleCursorAdapter cursorAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +40,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        this.cursorAdapter = new SimpleCursorAdapter(this, R.layout.activity_list_recent_murmurs, null, null, null, 0);
+        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_recent_murmurs, null, PaginatedMurmursCursor.COLUMN_NAMES, null, 0);
         setListAdapter(this.cursorAdapter);
         getLoaderManager().initLoader(0, null, this);
     }
@@ -66,7 +71,8 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        this.cursorAdapter.swapCursor(cursor);
+        log.debug("onLoadFinished for " + cursor);
+        this.cursorAdapter.changeCursor(cursor);
     }
 
     @Override

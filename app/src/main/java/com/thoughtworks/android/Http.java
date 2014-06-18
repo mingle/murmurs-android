@@ -1,9 +1,11 @@
 package com.thoughtworks.android;
 
-import android.app.Application;
-
+import com.dephillipsdesign.logomatic.LogOMatic;
+import com.dephillipsdesign.logomatic.Logger;
+import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -16,15 +18,13 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Translates apache commons HTTP to guava-friendly
@@ -32,12 +32,12 @@ import java.util.Map;
 public class Http {
 
     public class HttpForChaining {
-        public CharSource get(String url) {
+        public ByteSource get(String url) {
             return Http.this.doGet(Http.this.client, url);
         }
     }
 
-    private static final LogOMatic.Logger log = LogOMatic.getLogger(Http.class);
+    private static final Logger log = LogOMatic.getLogger(Http.class);
 
     private final HttpClient client;
 
@@ -54,12 +54,12 @@ public class Http {
         return self.new HttpForChaining();
     }
 
-    public static CharSource get(String url) {
+    public static ByteSource get(String url) {
         Http self = new Http();
         return self.doGet(self.client, url);
     }
 
-    CharSource doPost(HttpClient client, String url, Map<String, String> params) {
+    ByteSource doPost(HttpClient client, String url, Map<String, String> params) {
         URI uri = URI.create(url);
         log.debug("POST to " + uri);
         log.debug("POST parmas: " + params + " to " + url);
@@ -79,11 +79,8 @@ public class Http {
         try{
             final HttpResponse response = client.execute(httpPost);
 
-        if (Settings.isAppInDebugMode()) {
-            return debugLoggedResponseAsCharSource(response);
-        } else {
-            return responseToCharSource(response);
-        }
+        return responseToByteSource(response);
+
     } catch (Exception e) {
         throw new RuntimeException(e);
     } finally {
@@ -94,7 +91,7 @@ public class Http {
 
 }
 
-    CharSource doGet(HttpClient client, String url) {
+    ByteSource doGet(HttpClient client, String url) {
         try {
             URI uri = URI.create(url);
 
@@ -107,35 +104,18 @@ public class Http {
                 log.debug("Headers: " + locationHeaders);
             }
 
-            if (Settings.isAppInDebugMode()) {
-                return debugLoggedResponseAsCharSource(response);
-            } else {
-                return responseToCharSource(response);
-            }
+            return responseToByteSource(response);
 
         } catch (Exception e) {
             throw new RuntimeException("Error loading resource " + url, e);
         }
     }
 
-    private CharSource debugLoggedResponseAsCharSource(HttpResponse response) throws IOException  {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 1024);
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            log.debug(line);
-            writer.println(line);
-        }
-        return CharSource.wrap(writer.toString());
-    }
-
-    private CharSource responseToCharSource(final HttpResponse response) {
-        return new CharSource() {
+    private ByteSource responseToByteSource(final HttpResponse response) {
+        return new ByteSource() {
             @Override
-            public Reader openStream() throws IOException {
-                return new InputStreamReader(response.getEntity().getContent());
+            public InputStream openStream() throws IOException {
+                return new BOMInputStream(response.getEntity().getContent());
             }
         };
     }
