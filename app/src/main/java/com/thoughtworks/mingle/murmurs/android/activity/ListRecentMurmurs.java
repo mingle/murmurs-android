@@ -40,7 +40,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_recent_murmurs, null, PaginatedMurmursCursor.COLUMN_NAMES, null, 0);
+        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.tagline, R.id.body, 0}, 0);
         setListAdapter(this.cursorAdapter);
         getLoaderManager().initLoader(0, null, this);
     }
