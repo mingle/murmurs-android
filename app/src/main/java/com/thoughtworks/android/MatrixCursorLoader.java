@@ -2,7 +2,6 @@ package com.thoughtworks.android;
 
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
@@ -17,6 +16,6 @@ public class MatrixCursorLoader extends CursorLoader {
 
     @Override
     protected Cursor onLoadInBackground() {
-        return cursor.prepopulateFirstPage();
+        return cursor.withAtLeastOnePageLoaded();
     }
 }

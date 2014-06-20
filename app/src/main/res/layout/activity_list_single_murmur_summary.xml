@@ -4,26 +4,48 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Lorem ipsum"
-        android:id="@+id/body"
-        android:textColor="@android:color/black"
-        android:paddingLeft="20px"
-        android:paddingTop="10px"
-        android:paddingRight="5px"
-        android:paddingBottom="5px"
-        android:padding="5px" />
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-Osito 3 minutes ago"
-        android:id="@+id/tagline"
-        android:paddingLeft="50px"
-        android:paddingTop="10px"
-        android:paddingBottom="10px" />
+        <com.thoughtworks.android.WebImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/icon"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:minHeight="50px"
+            android:minWidth="50px"
+            android:src="@drawable/default_avatar"
+            android:background="#ffffc238"
+            android:layout_margin="5px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Lorem ipsum"
+            android:id="@+id/body"
+            android:textColor="@android:color/black"
+            android:paddingLeft="20px"
+            android:paddingTop="10px"
+            android:paddingRight="5px"
+            android:paddingBottom="5px"
+            android:padding="5px"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_margin="10px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-Osito 3 minutes ago"
+            android:id="@+id/tagline"
+            android:paddingTop="10px"
+            android:paddingBottom="10px"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:textStyle="italic" />
+    </GridLayout>
 
 </LinearLayout>

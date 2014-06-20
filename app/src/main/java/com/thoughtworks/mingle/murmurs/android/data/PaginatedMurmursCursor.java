@@ -17,6 +17,7 @@ import com.thoughtworks.mingle.murmurs.MurmursLoader;
 import com.thoughtworks.mingle.murmurs.Murmur;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -34,19 +35,19 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
     }
 
-    public PaginatedMurmursCursor prepopulateFirstPage() {
-
-        logger.debug("prepopulating first page");
-        long start = System.currentTimeMillis();
-
-        final ByteSource xml = Http.get(Settings.getMurmursIndexUrl());
-
-        List<Murmur> murmurs = new MurmursLoader().loadMultipleFromXml(new CharSource() {
+    private Http.ResponseHandler loadMurmursFromXml() {
+        return new Http.ResponseHandler() {
             @Override
-            public Reader openStream() throws IOException {
-                return new InputStreamReader(xml.openBufferedStream());
-            }
-        });
+            public void handleResponse(int responseCode, final InputStream body) {
+
+                final long start = System.currentTimeMillis();
+
+                List<Murmur> murmurs = new MurmursLoader().loadMultipleFromXml(new CharSource() {
+                    @Override
+                    public Reader openStream() throws IOException {
+                        return new InputStreamReader(body);
+                    }
+                });
 
                 Collection < Collection < String >> columnValues = Collections2.transform(murmurs, new Function<Murmur, Collection<String>>() {
                     @Override
@@ -56,11 +57,26 @@ public class PaginatedMurmursCursor extends MatrixCursor {
                     }
                 });
 
-        long end = System.currentTimeMillis();
-        logger.infof("Retrieved %d murmurs in %fsec", columnValues.size(), ((end - start) / 1000.0));
-        for(Iterable<String> columnValue : columnValues) {
-            addRow(columnValue);
+                long end = System.currentTimeMillis();
+                logger.infof("Retrieved %d murmurs in %fsec", columnValues.size(), ((end - start) / 1000.0));
+                for(Iterable<String> columnValue : columnValues) {
+                    addRow(columnValue);
+                }
+
+            }
+        };
+    }
+
+    public PaginatedMurmursCursor withAtLeastOnePageLoaded() {
+
+        if (getCount() > 0) {
+            return this;
         }
+
+        logger.debug("prepopulating first page");
+
+        Http.success(loadMurmursFromXml()).get(Settings.getMurmursIndexUrl());
+
         return this;
     }
 }

@@ -9,6 +9,7 @@ import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
@@ -16,6 +17,7 @@ import android.widget.SimpleCursorAdapter;
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
 import com.thoughtworks.android.MatrixCursorLoader;
+import com.thoughtworks.android.WebImageView;
 import com.thoughtworks.mingle.murmurs.android.R;
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
 
@@ -40,7 +42,20 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.tagline, R.id.body, 0}, 0);
+        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.tagline, R.id.body, R.id.icon}, 0);
+        this.cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                log.debugf("Binding column[%d] with %s", columnIndex, cursor.getString(columnIndex));
+                if(columnIndex == 3) {
+                    log.debug("Binding with special WebImageView");
+                    WebImageView imageView = (WebImageView) view.findViewById(R.id.icon);
+                    imageView.setUrl(cursor.getString(columnIndex));
+                    return true;
+                }
+                return false;
+            }
+        });
         setListAdapter(this.cursorAdapter);
         getLoaderManager().initLoader(0, null, this);
     }
