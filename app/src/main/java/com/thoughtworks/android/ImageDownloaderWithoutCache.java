@@ -5,6 +5,10 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import com.dephillipsdesign.lychee.base.MutableValueHolder;
+import com.thoughtworks.android.http.Http;
+import com.thoughtworks.android.http.ResponseHandler;
+
 import java.io.InputStream;
 
 
@@ -17,14 +21,14 @@ public class ImageDownloaderWithoutCache extends AsyncTask<String, Void, Bitmap>
     }
 
     protected Bitmap doInBackground(String... params) {
-        final Http.MutableValueHolder<Bitmap> bitmap = new Http.MutableValueHolder<Bitmap>();
+        final MutableValueHolder<Bitmap> bitmap = new MutableValueHolder<Bitmap>();
         String uri = params[0];
-        Http.success(new Http.ResponseHandler() {
+        Http.success(new ResponseHandler() {
             @Override
             public void handleResponse(int responseCode, InputStream body) {
                 bitmap.set(BitmapFactory.decodeStream(body, null, null));
             }
-        }).notFound(new Http.ResponseHandler() {
+        }).notFound(new ResponseHandler() {
             @Override
             public void handleResponse(int responseCode, InputStream body) {
                 //do nothing

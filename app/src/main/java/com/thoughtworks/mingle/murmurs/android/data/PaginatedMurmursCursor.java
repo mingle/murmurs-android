@@ -5,14 +5,14 @@ import android.database.MatrixCursor;
 
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
-import com.thoughtworks.android.Http;
+import com.thoughtworks.android.http.Http;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 
 import com.thoughtworks.android.Settings;
+import com.thoughtworks.android.http.ResponseHandler;
 import com.thoughtworks.mingle.murmurs.MurmursLoader;
 import com.thoughtworks.mingle.murmurs.Murmur;
 
@@ -35,8 +35,8 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
     }
 
-    private Http.ResponseHandler loadMurmursFromXml() {
-        return new Http.ResponseHandler() {
+    private ResponseHandler loadMurmursFromXml() {
+        return new ResponseHandler() {
             @Override
             public void handleResponse(int responseCode, final InputStream body) {
 
