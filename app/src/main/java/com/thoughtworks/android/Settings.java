@@ -14,6 +14,14 @@ public class Settings {
         return Joiner.on('/').join(getBaseUrl(), "images", "avatars", initial.toLowerCase() + ".png");
     };
 
+    public static String getEmail() {
+        return "test-user@nowhere.com";
+    }
+
+    public static String getPassword() {
+        return "password";
+    }
+
     public static String getProjectIdentifier() {
         return "test";
     }

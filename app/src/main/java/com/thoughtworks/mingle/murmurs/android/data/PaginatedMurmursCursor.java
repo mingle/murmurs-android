@@ -77,7 +77,7 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
         if (getCount() == 0) {
             log.debug("prepopulating first page or murmurs");
-            Http.success(loadMurmursFromXml()).get(Settings.getMurmursIndexUrl());
+            Http.success(loadMurmursFromXml()).basicAuth(Settings.getEmail(), Settings.getPassword()).get(Settings.getMurmursIndexUrl());
         }
 
         return this;

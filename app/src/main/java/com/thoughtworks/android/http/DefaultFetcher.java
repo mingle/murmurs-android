@@ -8,7 +8,6 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -17,15 +16,24 @@ import java.io.InputStream;
 import java.net.URI;
 
 public class DefaultFetcher implements Fetcher {
-    private final HttpClient client;
+    private final DefaultHttpClient client;
 
     private static final Logger log = LogOMatic.getLogger(DefaultFetcher.class);
 
     private ResponseHandler successHandler;
     private ResponseHandler notFoundHandler;
+    private String username;
+    private String password;
+    private ResponseHandler debugHandler;
 
     public DefaultFetcher() {
         client = new DefaultHttpClient();
+        notFoundHandler = successHandler = new ResponseHandler() {
+            @Override
+            public void handleResponse(int responseCode, InputStream body) {
+                throw new ResponseNotHandledException(responseCode);
+            }
+        };
     }
 
     @Override
@@ -42,6 +50,13 @@ public class DefaultFetcher implements Fetcher {
     @Override
     public Fetcher notFound(ResponseHandler handler) {
         notFoundHandler = handler;
+        return this;
+    }
+
+    @Override
+    public Fetcher basicAuth(String username, String password) {
+        this.username = username;
+        this.password = password;
         return this;
     }
 
@@ -70,6 +85,8 @@ public class DefaultFetcher implements Fetcher {
             log.debug("GET request for " + uri);
 
             HttpGet request = new HttpGet(new URI(url));
+            attachAnyInterceptors(uri);
+
             final HttpResponse response = client.execute(request);
             Header[] locationHeaders = response.getHeaders("location");
             if (locationHeaders.length > 0) {
@@ -77,19 +94,35 @@ public class DefaultFetcher implements Fetcher {
             }
 
             int code = response.getStatusLine().getStatusCode();
-            if (code >= 200 && code < 300) {
-                with(successHandler).handleResponse(response);
-            } else if (code == 404) {
-                with(notFoundHandler).handleResponse(response);
+            switch (code) {
+                case 200:
+                case 201:
+                case 302:
+                    with(successHandler).handleResponse(response);
+                    break;
+                case 404:
+                    with(notFoundHandler).handleResponse(response);
+                    break;
+                default:
+                    log.error("Unhandled response " + code);
+                    for (Header h : response.getAllHeaders()) {
+                        log.debugf("%s => %s", h.getName(), h.getValue());
+                    }
+                    log.debug(IOUtils.toString(response.getEntity().getContent()));
+                    throw new ResponseNotHandledException(code);
             }
-
 
         } catch (Exception e) {
             throw new RuntimeException("Error loading resource " + url, e);
         }
     }
 
-    ;
+    private void attachAnyInterceptors(URI uri) {
+        if (username != null) {
+            client.addRequestInterceptor(new BasicAuthRequestInterceptor(client, uri, username, password));
+        }
+    }
+
 
     private class ResponseNotHandledException extends RuntimeException {
         ResponseNotHandledException(int code) {
