@@ -4,11 +4,14 @@ import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -50,19 +53,20 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 
-                if(columnIndex == 4) {
-                    AvatarImageView imageView = (AvatarImageView) view.findViewById(R.id.icon);
-                    String username = cursor.getString(1);
-                    imageView.setUrl(username, cursor.getString(columnIndex));
-                    return true;
-                } else if (columnIndex == 2) {
-                    final Date createdAt= new Date(cursor.getLong(2));
-                    final Date corrected = Utc.toLocalTime(createdAt);
-                    log.debugf("%s => %s", createdAt, corrected);
-                    String prettyCreatedAt = PRETTY_TIME.format(corrected);
-                    log.debugf("pretty => %s", prettyCreatedAt);
-                    ((TextView) view).setText(prettyCreatedAt);
-                    return true;
+                switch (columnIndex) {
+                    case 4:
+                        AvatarImageView imageView = (AvatarImageView) view.findViewById(R.id.icon);
+                        String username = cursor.getString(1);
+                        imageView.setUrl(username, cursor.getString(columnIndex));
+                        return true;
+                    case 2:
+                        final Date createdAt = new Date(cursor.getLong(2));
+                        final Date corrected = Utc.toLocalTime(createdAt);
+                        log.debugf("%s => %s", createdAt, corrected);
+                        String prettyCreatedAt = PRETTY_TIME.format(corrected);
+                        log.debugf("pretty => %s", prettyCreatedAt);
+                        ((TextView) view).setText(prettyCreatedAt);
+                        return true;
                 }
                 return false;
             }

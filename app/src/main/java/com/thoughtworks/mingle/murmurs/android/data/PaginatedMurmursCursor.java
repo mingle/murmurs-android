@@ -1,5 +1,6 @@
 package com.thoughtworks.mingle.murmurs.android.data;
 
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.MatrixCursor;
 
 
@@ -27,14 +28,13 @@ import java.util.List;
 
 public class PaginatedMurmursCursor extends MatrixCursor {
 
-    private static final Logger logger = LogOMatic.getLogger(PaginatedMurmursCursor.class);
+    private static final Logger log = LogOMatic.getLogger(PaginatedMurmursCursor.class);
     public static final String ID = "_ID";
     public static final String AUTHOR = "AUTHOR";
     public static final String CREATED_AT = "CREATED_AT";
     public static final String BODY = "BODY";
     public static final String ICON_PATH = "ICON_PATH";
     public static final java.lang.String[] COLUMN_NAMES = {ID, AUTHOR, CREATED_AT, BODY, ICON_PATH};
-    public static final List<String> COLUMN_NAMES_LIST = Arrays.asList(COLUMN_NAMES);
 
     public PaginatedMurmursCursor() {
         super(COLUMN_NAMES);
@@ -58,13 +58,13 @@ public class PaginatedMurmursCursor extends MatrixCursor {
                 Collection < Collection < Object >> columnValues = Collections2.transform(murmurs, new Function<Murmur, Collection<Object>>() {
                     @Override
                     public Collection<Object> apply(Murmur murmur) {
-                        logger.debugf("Loading murmur '%s' into Cursor", murmur.getShortBody());
+                        log.debugf("Loading murmur '%s' into Cursor", murmur.getShortBody());
                         return new ArrayList<Object>(Arrays.asList(murmur.getId(), murmur.getAuthor(), murmur.getCreatedAt().getTime(), murmur.getShortBody(), murmur.getIconPathUri()));
                     }
                 });
 
                 long end = System.currentTimeMillis();
-                logger.infof("Retrieved %d murmurs in %fsec", columnValues.size(), ((end - start) / 1000.0));
+                log.infof("Retrieved %d murmurs in %fsec", columnValues.size(), ((end - start) / 1000.0));
                 for(Iterable<Object> columnValue : columnValues) {
                     addRow(columnValue);
                 }
@@ -76,7 +76,7 @@ public class PaginatedMurmursCursor extends MatrixCursor {
     public PaginatedMurmursCursor withAtLeastOnePageLoaded() {
 
         if (getCount() == 0) {
-            logger.debug("prepopulating first page or murmurs");
+            log.debug("prepopulating first page or murmurs");
             Http.success(loadMurmursFromXml()).get(Settings.getMurmursIndexUrl());
         }
 
