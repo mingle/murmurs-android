@@ -28,7 +28,7 @@ import java.util.List;
 public class PaginatedMurmursCursor extends MatrixCursor {
 
     private static final Logger logger = LogOMatic.getLogger(PaginatedMurmursCursor.class);
-    public static final java.lang.String[] COLUMN_NAMES = { "_ID", "TAGLINE", "BODY", "ICON_PATH" };
+    public static final java.lang.String[] COLUMN_NAMES = { "_ID", "AUTHOR", "CREATED_AT", "BODY", "ICON_PATH" };
 
     public PaginatedMurmursCursor() {
         super(COLUMN_NAMES);
@@ -49,17 +49,17 @@ public class PaginatedMurmursCursor extends MatrixCursor {
                     }
                 });
 
-                Collection < Collection < String >> columnValues = Collections2.transform(murmurs, new Function<Murmur, Collection<String>>() {
+                Collection < Collection < Object >> columnValues = Collections2.transform(murmurs, new Function<Murmur, Collection<Object>>() {
                     @Override
-                    public Collection<String> apply(Murmur murmur) {
+                    public Collection<Object> apply(Murmur murmur) {
                         logger.debugf("Loading murmur '%s' into Cursor", murmur.getShortBody());
-                        return new ArrayList<String>(Arrays.asList(String.valueOf(murmur.getId()), murmur.getTagline(), murmur.getShortBody(), murmur.getIconPathUri()));
+                        return new ArrayList<Object>(Arrays.asList(murmur.getId(), murmur.getAuthor(), murmur.getCreatedAt().getTime(), murmur.getShortBody(), murmur.getIconPathUri()));
                     }
                 });
 
                 long end = System.currentTimeMillis();
                 logger.infof("Retrieved %d murmurs in %fsec", columnValues.size(), ((end - start) / 1000.0));
-                for(Iterable<String> columnValue : columnValues) {
+                for(Iterable<Object> columnValue : columnValues) {
                     addRow(columnValue);
                 }
 
@@ -69,13 +69,10 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
     public PaginatedMurmursCursor withAtLeastOnePageLoaded() {
 
-        if (getCount() > 0) {
-            return this;
+        if (getCount() == 0) {
+            logger.debug("prepopulating first page or murmurs");
+            Http.success(loadMurmursFromXml()).get(Settings.getMurmursIndexUrl());
         }
-
-        logger.debug("prepopulating first page");
-
-        Http.success(loadMurmursFromXml()).get(Settings.getMurmursIndexUrl());
 
         return this;
     }

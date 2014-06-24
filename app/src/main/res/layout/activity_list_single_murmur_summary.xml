@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.thoughtworks.android.WebImageView
+        <com.thoughtworks.android.AvatarImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:id="@+id/icon"
@@ -37,15 +37,27 @@
             android:layout_margin="10px" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="217dp"
             android:layout_height="wrap_content"
-            android:text="-Osito 3 minutes ago"
-            android:id="@+id/tagline"
+            android:text="Osito"
+            android:id="@+id/author"
             android:paddingTop="10px"
             android:paddingBottom="10px"
             android:layout_row="1"
             android:layout_column="1"
             android:textStyle="italic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="30 minutes ago"
+            android:id="@+id/createdAt"
+            android:layout_row="1"
+            android:layout_column="4"
+            android:layout_marginRight="10px"
+            android:textColor="#ff707070" />
+
     </GridLayout>
 
 </LinearLayout>

@@ -10,6 +10,10 @@ public class Settings {
         return "https://murmurs-android-test.mingle-staging.thoughtworks.com";
     }
 
+    public static String getFallbackIconUrl(String initial) {
+        return Joiner.on('/').join(getBaseUrl(), "images", "avatars", initial.toLowerCase() + ".png");
+    };
+
     public static String getProjectIdentifier() {
         return "test";
     }

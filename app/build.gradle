@@ -27,7 +27,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile group: 'com.google.guava', name: 'guava', version: '17.+'
-    compile files('libs/murmurs-api-1.0.0.jar')
+    compile files('libs/murmurs-api-1.0.1-20140623.jar')
     compile files('libs/log-o-matic-android-1.0.0.jar')
     compile files('libs/lychee-1.0.0-20140623.jar')
 

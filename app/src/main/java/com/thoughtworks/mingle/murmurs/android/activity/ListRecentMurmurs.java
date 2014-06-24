@@ -2,10 +2,8 @@ package com.thoughtworks.mingle.murmurs.android.activity;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,13 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
+import com.ocpsoft.pretty.time.PrettyTime;
 import com.thoughtworks.android.MatrixCursorLoader;
-import com.thoughtworks.android.WebImageView;
+import com.thoughtworks.android.AvatarImageView;
 import com.thoughtworks.mingle.murmurs.android.R;
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
+
+import java.util.Date;
 
 
 public class ListRecentMurmurs extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -28,6 +30,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
 
     private SimpleCursorAdapter cursorAdapter;
 
+    private static final PrettyTime PRETTY_TIME = new PrettyTime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +45,18 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.tagline, R.id.body, R.id.icon}, 0);
+        this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.author, R.id.createdAt, R.id.body, R.id.icon}, 0);
         this.cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                log.debugf("Binding column[%d] with %s", columnIndex, cursor.getString(columnIndex));
-                if(columnIndex == 3) {
-                    log.debug("Binding with special WebImageView");
-                    WebImageView imageView = (WebImageView) view.findViewById(R.id.icon);
-                    imageView.setUrl(cursor.getString(columnIndex));
+                if(columnIndex == 4) {
+                    AvatarImageView imageView = (AvatarImageView) view.findViewById(R.id.icon);
+                    String username = cursor.getString(1);
+                    imageView.setUrl(username, cursor.getString(columnIndex));
+                    return true;
+                } else if (columnIndex == 2) {
+                    String prettyCreatedAt = PRETTY_TIME.format(new Date(cursor.getLong(2)));
+                    ((TextView) view).setText(prettyCreatedAt);
                     return true;
                 }
                 return false;
