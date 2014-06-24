@@ -35,10 +35,11 @@ public class PaginatedMurmursCursor extends MatrixCursor {
     public static final String BODY = "BODY";
     public static final String ICON_PATH = "ICON_PATH";
     public static final java.lang.String[] COLUMN_NAMES = {ID, AUTHOR, CREATED_AT, BODY, ICON_PATH};
+    private final Settings settings;
 
-    public PaginatedMurmursCursor() {
+    public PaginatedMurmursCursor(Settings settings) {
         super(COLUMN_NAMES);
-
+        this.settings = settings;
     }
 
     private ResponseHandler loadMurmursFromXml() {
@@ -77,7 +78,7 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
         if (getCount() == 0) {
             log.debug("prepopulating first page or murmurs");
-            Http.success(loadMurmursFromXml()).basicAuth(Settings.getEmail(), Settings.getPassword()).get(Settings.getMurmursIndexUrl());
+            Http.success(loadMurmursFromXml()).basicAuth(settings.getEmail(), settings.getPassword()).get(settings.getMurmursIndexUrl());
         }
 
         return this;

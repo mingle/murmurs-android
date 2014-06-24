@@ -1,36 +1,51 @@
 package com.thoughtworks.android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.google.common.base.Joiner;
 
 import java.util.Arrays;
 
 public class Settings {
 
-    public static String getBaseUrl() {
-        return "https://murmurs-android-test.mingle-staging.thoughtworks.com";
+    private final SharedPreferences preferences;
+
+    private Settings(SharedPreferences preferences) {
+        this.preferences = preferences;
     }
 
-    public static String getFallbackIconUrl(String initial) {
+    public static Settings under(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return new Settings(preferences);
+    }
+
+    public String getBaseUrl() {
+        return preferences.getString("url", "");
+    }
+
+    public String getFallbackIconUrl(String initial) {
         return Joiner.on('/').join(getBaseUrl(), "images", "avatars", initial.toLowerCase() + ".png");
     };
 
-    public static String getEmail() {
-        return "test-user@nowhere.com";
+    public String getEmail() {
+        return preferences.getString("email", "");
     }
 
-    public static String getPassword() {
-        return "password";
+    public String getPassword() {
+        return preferences.getString("password", "");
     }
 
-    public static String getProjectIdentifier() {
-        return "test";
+    public String getProjectIdentifier() {
+        return preferences.getString("project_identifier", "");
     }
 
-    public static String getMurmursRestResource() {
+    public String getMurmursRestResource() {
         return "murmurs.xml";
     }
 
-    public static String getMurmursIndexUrl() {
+    public String getMurmursIndexUrl() {
         return Joiner.on('/').join(Arrays.asList(getBaseUrl(), "api/v2/projects", getProjectIdentifier(), getMurmursRestResource()));
     }
 }

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.dephillipsdesign.logomatic.Logger;
 import com.ocpsoft.pretty.time.PrettyTime;
 import com.thoughtworks.android.MatrixCursorLoader;
 import com.thoughtworks.android.AvatarImageView;
+import com.thoughtworks.android.Settings;
 import com.thoughtworks.android.Utc;
 import com.thoughtworks.mingle.murmurs.android.R;
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
@@ -40,6 +42,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
@@ -96,7 +99,7 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new MatrixCursorLoader(this.getApplicationContext(), new PaginatedMurmursCursor());
+        return new MatrixCursorLoader(this.getApplicationContext(), new PaginatedMurmursCursor(Settings.under(getApplicationContext())));
     }
 
     @Override

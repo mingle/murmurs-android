@@ -51,7 +51,7 @@ public class AvatarDownloaderWithoutCache extends AsyncTask<String, Void, Bitmap
                    String initial = username.toLowerCase().substring(0, 1);
                    log.debugf("Attempting to retrieve fallback icon for '%s',  initial: %s", username, initial);
                    if (CharMatcher.inRange('a', 'z').matchesAllOf(initial)) {
-                       bitmap.set(fetchBitmap(Settings.getFallbackIconUrl(initial)));
+                       bitmap.set(fetchBitmap(Settings.under(image.getContext()).getFallbackIconUrl(initial)));
                    }
                }
            }).get(url);

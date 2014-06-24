@@ -33,9 +33,11 @@ dependencies {
 
     compile group: 'com.ocpsoft', name: 'ocpsoft-pretty-time', version: '1.+'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
-    compile('org.simpleframework:simple-xml:2.7.1') {
-        exclude group: 'stax', module: 'stax-api'
-        exclude group: 'xpp3', module: 'xpp3'
-    }
     compile group: 'commons-io', name: 'commons-io', version: '2.+'
+
+    compile('org.simpleframework:simple-xml:2.7.1') {
+      exclude group: 'stax', module: 'stax-api'
+      exclude group: 'xpp3', module: 'xpp3'
+    }
+    compile 'com.android.support:support-v4:19.+'
 }
