@@ -18,10 +18,12 @@ import com.dephillipsdesign.logomatic.Logger;
 import com.ocpsoft.pretty.time.PrettyTime;
 import com.thoughtworks.android.MatrixCursorLoader;
 import com.thoughtworks.android.AvatarImageView;
+import com.thoughtworks.android.Utc;
 import com.thoughtworks.mingle.murmurs.android.R;
 import com.thoughtworks.mingle.murmurs.android.data.PaginatedMurmursCursor;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 
 public class ListRecentMurmurs extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -47,13 +49,18 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         this.cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                if(columnIndex == PaginatedMurmursCursor.COLUMN_NAMES_LIST.indexOf(PaginatedMurmursCursor.ICON_PATH)) {
+
+                if(columnIndex == 4) {
                     AvatarImageView imageView = (AvatarImageView) view.findViewById(R.id.icon);
                     String username = cursor.getString(1);
                     imageView.setUrl(username, cursor.getString(columnIndex));
                     return true;
-                } else if (columnIndex == PaginatedMurmursCursor.COLUMN_NAMES_LIST.indexOf(PaginatedMurmursCursor.ICON_PATH)) {
-                    String prettyCreatedAt = PRETTY_TIME.format(new Date(cursor.getLong(2)));
+                } else if (columnIndex == 2) {
+                    final Date createdAt= new Date(cursor.getLong(2));
+                    final Date corrected = Utc.toLocalTime(createdAt);
+                    log.debugf("%s => %s", createdAt, corrected);
+                    String prettyCreatedAt = PRETTY_TIME.format(corrected);
+                    log.debugf("pretty => %s", prettyCreatedAt);
                     ((TextView) view).setText(prettyCreatedAt);
                     return true;
                 }

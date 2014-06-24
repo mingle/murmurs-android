@@ -61,10 +61,10 @@ public class BackgroundColor {
         return hash;
     }
 
-    public static int forUser(String username) {
+    public static String forUser(String username) {
         final int hash = Math.abs(hash(username));
         String css = COLORS[hash % COLORS.length];
         log.debugf("%s hashed to %d which is %s", username, hash, css);
-        return Color.parseColor(css);
+        return css;
     }
 }
