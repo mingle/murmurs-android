@@ -28,7 +28,13 @@ import java.util.List;
 public class PaginatedMurmursCursor extends MatrixCursor {
 
     private static final Logger logger = LogOMatic.getLogger(PaginatedMurmursCursor.class);
-    public static final java.lang.String[] COLUMN_NAMES = { "_ID", "AUTHOR", "CREATED_AT", "BODY", "ICON_PATH" };
+    public static final String ID = "_ID";
+    public static final String AUTHOR = "AUTHOR";
+    public static final String CREATED_AT = "CREATED_AT";
+    public static final String BODY = "BODY";
+    public static final String ICON_PATH = "ICON_PATH";
+    public static final java.lang.String[] COLUMN_NAMES = {ID, AUTHOR, CREATED_AT, BODY, ICON_PATH};
+    public static final List<String> COLUMN_NAMES_LIST = Arrays.asList(COLUMN_NAMES);
 
     public PaginatedMurmursCursor() {
         super(COLUMN_NAMES);

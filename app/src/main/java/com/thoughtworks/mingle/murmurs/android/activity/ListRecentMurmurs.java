@@ -36,12 +36,10 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create a progress bar to display while the list loads
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
         getListView().setEmptyView(progressBar);
 
-        // Must add the progress bar to the root of the layout
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
@@ -49,12 +47,12 @@ public class ListRecentMurmurs extends ListActivity implements LoaderManager.Loa
         this.cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                if(columnIndex == 4) {
+                if(columnIndex == PaginatedMurmursCursor.COLUMN_NAMES_LIST.indexOf(PaginatedMurmursCursor.ICON_PATH)) {
                     AvatarImageView imageView = (AvatarImageView) view.findViewById(R.id.icon);
                     String username = cursor.getString(1);
                     imageView.setUrl(username, cursor.getString(columnIndex));
                     return true;
-                } else if (columnIndex == 2) {
+                } else if (columnIndex == PaginatedMurmursCursor.COLUMN_NAMES_LIST.indexOf(PaginatedMurmursCursor.ICON_PATH)) {
                     String prettyCreatedAt = PRETTY_TIME.format(new Date(cursor.getLong(2)));
                     ((TextView) view).setText(prettyCreatedAt);
                     return true;

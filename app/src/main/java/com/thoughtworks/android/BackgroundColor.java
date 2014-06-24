@@ -53,8 +53,8 @@ public class BackgroundColor {
     private static int hash(String string) {
         int hash = 0;
 
-        for (char c : string.toCharArray()) {
-            int temp = (hash << 5) - hash + c;
+        for (int i=0; i < string.length(); i++) {
+            int temp = (hash << 5) - hash + Character.getNumericValue(string.charAt(i));
             hash = temp & temp;
         }
 
