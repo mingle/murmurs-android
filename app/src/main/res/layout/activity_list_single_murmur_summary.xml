@@ -17,7 +17,7 @@
             android:minHeight="50px"
             android:minWidth="50px"
             android:src="@drawable/default_avatar"
-            android:background="#ffffc238"
+            android:background="#ff8ec6de"
             android:layout_margin="5px" />
 
         <TextView

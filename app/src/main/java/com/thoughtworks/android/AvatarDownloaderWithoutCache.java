@@ -18,6 +18,7 @@ import java.io.InputStream;
 public class AvatarDownloaderWithoutCache extends AsyncTask<String, Void, Bitmap> {
 
     private final ImageView image;
+    private int backgroundColor;
     private final String username;
 
     private static final Logger log = LogOMatic.getLogger(AvatarDownloaderWithoutCache.class);
@@ -50,6 +51,7 @@ public class AvatarDownloaderWithoutCache extends AsyncTask<String, Void, Bitmap
                    String initial = username.toLowerCase().substring(0, 1);
                    log.debugf("Attempting to retrieve fallback icon for '%s',  initial: %s", username, initial);
                    if (CharMatcher.inRange('a', 'z').matchesAllOf(initial)) {
+                       backgroundColor = BackgroundColor.forUser(username);
                        bitmap.set(fetchBitmap(Settings.getFallbackIconUrl(initial)));
                    }
                }
@@ -66,6 +68,8 @@ public class AvatarDownloaderWithoutCache extends AsyncTask<String, Void, Bitmap
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         if (bitmap != null) {
+            log.debugf("Background color is %d", backgroundColor);
+            image.setBackgroundColor(backgroundColor);
             image.setImageBitmap(bitmap);
         }
     }
