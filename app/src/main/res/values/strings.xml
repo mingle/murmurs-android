@@ -2,5 +2,8 @@
 <resources>
 
     <string name="app_name">Mingle Murmurs</string>
+    <string name="title_activity_setup">SetupActivity</string>
+    <string name="hello_world">Welcome to Mingle Murmurs</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

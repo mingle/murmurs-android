@@ -10,48 +10,63 @@ import com.thoughtworks.mingle.api.MingleInstance;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Settings {
 
     private final static Logger log = LogOMatic.getLogger(Settings.class);
+
+    private static final ConcurrentHashMap<Context, Settings> SAVED_SETTINGS = new ConcurrentHashMap<Context, Settings>();
+    private String url;
+    private String password;
+    private String email;
 
     private Settings() {
 
     }
 
     public static Settings under(Context context) {
-        return new Settings();
+        SAVED_SETTINGS.putIfAbsent(context, new Settings());
+        return SAVED_SETTINGS.get(context);
     }
 
-    private String getUrl() {
-        return "https://murmurs-android-test.mingle-staging.thoughtworks.com/projects/test";
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getMurmursUrl() {
-        return MingleInstance.at(getUrl()).getMurmursUrl();
+        return MingleInstance.at(url).getMurmursUrl();
     }
 
 
     public String getFallbackIconUrl(String initial) {
-        return MingleInstance.at(getUrl()).getAvatarImageUrl(initial.toLowerCase() + ".png");
+        return MingleInstance.at(url).getAvatarImageUrl(initial.toLowerCase() + ".png");
     };
 
-
-
     public String getEmail() {
-        return preferences.getString("email", "");
+        return email;
     }
 
     public String getPassword() {
-        return preferences.getString("password", "");
+        return password;
     }
 
    public boolean seemIncomplete() {
-        log.debugf("Settings: URL(%s), email(%s), password(%s)", getUrl(), getEmail(), getMaskedPassword());
-        return StringUtils.isBlank(getUrl()) || StringUtils.isBlank(getEmail()) || StringUtils.isBlank(getPassword());
+        log.debugf("Settings: URL(%s), email(%s), password(%s)", url, getEmail(), getMaskedPassword());
+        return StringUtils.isBlank(url) || StringUtils.isBlank(getEmail()) || StringUtils.isBlank(getPassword());
     }
 
     private String getMaskedPassword() {
         return getPassword().replaceAll(".","*");
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

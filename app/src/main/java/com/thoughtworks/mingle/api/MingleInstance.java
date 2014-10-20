@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MingleInstance {
-    private static final String REGEX = "(https?)://([\\w-]+).([\\w-]+).thoughtworks.com/projects/(\\w+)";
+    private static final String REGEX = "(https?)://([\\w-]+)\\.([\\w-]+)\\.thoughtworks\\.com/projects/(\\w+).*";
     private static final Pattern URL_PATTERN = Pattern.compile(REGEX);
 
     private static final Logger log = LogOMatic.getLogger(MingleInstance.class);
