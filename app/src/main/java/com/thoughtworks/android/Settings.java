@@ -4,30 +4,38 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.common.base.Joiner;
+import com.dephillipsdesign.logomatic.LogOMatic;
+import com.dephillipsdesign.logomatic.Logger;
+import com.thoughtworks.mingle.api.MingleInstance;
 
-import java.util.Arrays;
+import org.apache.commons.lang.StringUtils;
 
 public class Settings {
 
-    private final SharedPreferences preferences;
+    private final static Logger log = LogOMatic.getLogger(Settings.class);
 
-    private Settings(SharedPreferences preferences) {
-        this.preferences = preferences;
+    private Settings() {
+
     }
 
     public static Settings under(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return new Settings(preferences);
+        return new Settings();
     }
 
-    public String getBaseUrl() {
-        return preferences.getString("url", "");
+    private String getUrl() {
+        return "https://murmurs-android-test.mingle-staging.thoughtworks.com/projects/test";
     }
+
+    public String getMurmursUrl() {
+        return MingleInstance.at(getUrl()).getMurmursUrl();
+    }
+
 
     public String getFallbackIconUrl(String initial) {
-        return Joiner.on('/').join(getBaseUrl(), "images", "avatars", initial.toLowerCase() + ".png");
+        return MingleInstance.at(getUrl()).getAvatarImageUrl(initial.toLowerCase() + ".png");
     };
+
+
 
     public String getEmail() {
         return preferences.getString("email", "");
@@ -37,15 +45,13 @@ public class Settings {
         return preferences.getString("password", "");
     }
 
-    public String getProjectIdentifier() {
-        return preferences.getString("project_identifier", "");
+   public boolean seemIncomplete() {
+        log.debugf("Settings: URL(%s), email(%s), password(%s)", getUrl(), getEmail(), getMaskedPassword());
+        return StringUtils.isBlank(getUrl()) || StringUtils.isBlank(getEmail()) || StringUtils.isBlank(getPassword());
     }
 
-    public String getMurmursRestResource() {
-        return "murmurs.xml";
+    private String getMaskedPassword() {
+        return getPassword().replaceAll(".","*");
     }
 
-    public String getMurmursIndexUrl() {
-        return Joiner.on('/').join(Arrays.asList(getBaseUrl(), "api/v2/projects", getProjectIdentifier(), getMurmursRestResource()));
-    }
 }

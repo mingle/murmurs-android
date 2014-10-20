@@ -1,6 +1,6 @@
 package com.thoughtworks.mingle.murmurs.android.data;
 
-import android.database.CursorIndexOutOfBoundsException;
+import android.content.Context;
 import android.database.MatrixCursor;
 
 
@@ -32,14 +32,16 @@ public class PaginatedMurmursCursor extends MatrixCursor {
     public static final String ID = "_ID";
     public static final String AUTHOR = "AUTHOR";
     public static final String CREATED_AT = "CREATED_AT";
-    public static final String BODY = "BODY";
+    public static final String SHORT_BODY = "SHORT_BODY";
     public static final String ICON_PATH = "ICON_PATH";
-    public static final java.lang.String[] COLUMN_NAMES = {ID, AUTHOR, CREATED_AT, BODY, ICON_PATH};
-    private final Settings settings;
+    public static final java.lang.String[] COLUMN_NAMES = {ID, AUTHOR, CREATED_AT, SHORT_BODY, ICON_PATH};
+    private final Context context;
+    private final DataLoadErrorHandler dataLoadErrorHandler;
 
-    public PaginatedMurmursCursor(Settings settings) {
+    public PaginatedMurmursCursor(Context context, DataLoadErrorHandler handler) {
         super(COLUMN_NAMES);
-        this.settings = settings;
+        this.context = context;
+        this.dataLoadErrorHandler = handler;
     }
 
     private ResponseHandler loadMurmursFromXml() {
@@ -78,7 +80,17 @@ public class PaginatedMurmursCursor extends MatrixCursor {
 
         if (getCount() == 0) {
             log.debug("prepopulating first page or murmurs");
-            Http.success(loadMurmursFromXml()).basicAuth(settings.getEmail(), settings.getPassword()).get(settings.getMurmursIndexUrl());
+            try {
+                Settings settings = Settings.under(context);
+                Http.success(loadMurmursFromXml()).basicAuth(settings.getEmail(), settings.getPassword()).error(new ResponseHandler() {
+                    @Override
+                    public void handleResponse(int responseCode, InputStream body) {
+                        dataLoadErrorHandler.handleDataLoadError("HTTP " + responseCode);
+                    }
+                }).get(settings.getMurmursUrl());
+            } catch (Exception e) {
+                dataLoadErrorHandler.handleDataLoadError("Internal error: " + e.getMessage());
+            }
         }
 
         return this;

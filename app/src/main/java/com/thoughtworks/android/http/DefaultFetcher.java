@@ -2,9 +2,11 @@ package com.thoughtworks.android.http;
 
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
+import com.google.common.base.Preconditions;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -25,6 +27,7 @@ public class DefaultFetcher implements Fetcher {
     private String username;
     private String password;
     private ResponseHandler debugHandler;
+    private ResponseHandler errorHandler;
 
     public DefaultFetcher() {
         client = new DefaultHttpClient();
@@ -60,6 +63,12 @@ public class DefaultFetcher implements Fetcher {
         return this;
     }
 
+    @Override
+    public Fetcher error(ResponseHandler handler) {
+        this.errorHandler = handler;
+        return this;
+    }
+
     private org.apache.http.client.ResponseHandler<Void> with(final ResponseHandler userCallback) {
         return new org.apache.http.client.ResponseHandler<Void>() {
             @Override
@@ -79,7 +88,7 @@ public class DefaultFetcher implements Fetcher {
 
     private void doGet(String url) {
         try {
-
+            Preconditions.checkArgument(StringUtils.isNotEmpty(url));
             URI uri = URI.create(url);
 
             log.debug("GET request for " + uri);
@@ -94,26 +103,34 @@ public class DefaultFetcher implements Fetcher {
             }
 
             int code = response.getStatusLine().getStatusCode();
-            switch (code) {
-                case 200:
-                case 201:
-                case 302:
-                    with(successHandler).handleResponse(response);
-                    break;
-                case 404:
-                    with(notFoundHandler).handleResponse(response);
-                    break;
-                default:
-                    log.error("Unhandled response " + code);
-                    for (Header h : response.getAllHeaders()) {
-                        log.debugf("%s => %s", h.getName(), h.getValue());
-                    }
-                    log.debug(IOUtils.toString(response.getEntity().getContent()));
-                    throw new ResponseNotHandledException(code);
+
+            if (code >= 300 && this.errorHandler != null) {
+                with(errorHandler).handleResponse(response);
+            } else {
+                switch (code) {
+                    case 200:
+                    case 201:
+                    case 302:
+                        with(successHandler).handleResponse(response);
+                        break;
+                    case 404:
+                        with(notFoundHandler).handleResponse(response);
+                        break;
+                    default:
+                        log.error("Unhandled response " + code);
+                        for (Header h : response.getAllHeaders()) {
+                            log.debugf("%s => %s", h.getName(), h.getValue());
+                        }
+                        log.debug(IOUtils.toString(response.getEntity().getContent()));
+                        throw new ResponseNotHandledException(code);
+                }
             }
 
+
         } catch (Exception e) {
+            log.error("error",e);
             throw new RuntimeException("Error loading resource " + url, e);
+
         }
     }
 

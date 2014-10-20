@@ -8,4 +8,6 @@ public interface Fetcher {
     Fetcher notFound(ResponseHandler handler);
 
     Fetcher basicAuth(String username, String password);
+
+    Fetcher error(ResponseHandler handler);
 }
