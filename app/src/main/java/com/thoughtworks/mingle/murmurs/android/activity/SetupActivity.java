@@ -23,13 +23,6 @@ public class SetupActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-//        Button saveButton = (Button) findViewById(R.id.saveSettingsButton);
-//        saveButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
     }
 
     public void saveSettings(View view) {
@@ -37,8 +30,10 @@ public class SetupActivity extends Activity {
         settings.setUrl(((TextView)findViewById(R.id.project_url)).getText().toString());
         settings.setEmail(((TextView) findViewById(R.id.email)).getText().toString());
         settings.setPassword(((TextView) findViewById(R.id.password)).getText().toString());
+        settings.save();
         Intent intent = new Intent(this, MurmursFeed.class);
         startActivity(intent);
+        finish();
     }
 
     @Override

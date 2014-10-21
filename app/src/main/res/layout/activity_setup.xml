@@ -34,8 +34,7 @@
         android:id="@+id/email"
         android:layout_below="@+id/email_label"
         android:layout_alignLeft="@+id/email_label"
-        android:layout_alignStart="@+id/email_label"
-        android:text="billd@thoughtworks.com" />
+        android:layout_alignStart="@+id/email_label" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,9 +75,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignLeft="@+id/project_label"
-        android:layout_alignStart="@+id/project_label"
-        android:text="https://murmurs-android-test.mingle-staging.thoughtworks.com/projects/test/overview"
-        android:layout_above="@+id/saveSettingsButton" />
+        android:layout_alignStart="@+id/project_label" />
 
     <Button
         android:layout_width="wrap_content"

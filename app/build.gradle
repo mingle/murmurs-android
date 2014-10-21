@@ -54,8 +54,8 @@ dependencies {
     compile group: 'commons-lang', name: 'commons-lang', version: '2.+'
 
     compile('org.simpleframework:simple-xml:2.7.1') {
-      exclude group: 'stax', module: 'stax-api'
-      exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'xpp3', module: 'xpp3'
     }
-    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:support-v4:21.0.0'
 }

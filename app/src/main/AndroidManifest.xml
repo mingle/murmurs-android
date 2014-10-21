@@ -16,6 +16,12 @@
         <activity
             android:name=".activity.SetupActivity"
             android:label="@string/title_activity_setup" >
+        </activity>
+        <activity
+            android:name=".activity.SplashScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_splash_screen"
+            android:theme="@style/FullscreenTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
