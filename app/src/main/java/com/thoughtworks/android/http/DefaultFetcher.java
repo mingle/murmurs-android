@@ -3,6 +3,8 @@ package com.thoughtworks.android.http;
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
 import com.google.common.base.Preconditions;
+import com.thoughtworks.mingle.api.hmac.HmacAuth;
+import com.thoughtworks.mingle.api.hmac.HmacRequestInterceptor;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
@@ -26,6 +28,7 @@ public class DefaultFetcher implements Fetcher {
     private ResponseHandler notFoundHandler;
     private String username;
     private String password;
+    private HmacAuth hmacAuth;
     private ResponseHandler debugHandler;
     private ResponseHandler errorHandler;
 
@@ -56,10 +59,19 @@ public class DefaultFetcher implements Fetcher {
         return this;
     }
 
+
+
+
     @Override
     public Fetcher basicAuth(String username, String password) {
         this.username = username;
         this.password = password;
+        return this;
+    }
+
+    @Override
+    public Fetcher hmacAuth(HmacAuth auth) {
+        this.hmacAuth = auth;
         return this;
     }
 
@@ -137,6 +149,10 @@ public class DefaultFetcher implements Fetcher {
     private void attachAnyInterceptors(URI uri) {
         if (username != null) {
             client.addRequestInterceptor(new BasicAuthRequestInterceptor(client, uri, username, password));
+        }
+
+        if (hmacAuth != null) {
+            client.addRequestInterceptor(new HmacRequestInterceptor(hmacAuth));
         }
     }
 

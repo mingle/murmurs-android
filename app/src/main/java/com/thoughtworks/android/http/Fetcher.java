@@ -1,5 +1,7 @@
 package com.thoughtworks.android.http;
 
+import com.thoughtworks.mingle.api.hmac.HmacAuth;
+
 public interface Fetcher {
     void get(String url);
 
@@ -8,6 +10,8 @@ public interface Fetcher {
     Fetcher notFound(ResponseHandler handler);
 
     Fetcher basicAuth(String username, String password);
+
+    Fetcher hmacAuth(HmacAuth auth);
 
     Fetcher error(ResponseHandler handler);
 }

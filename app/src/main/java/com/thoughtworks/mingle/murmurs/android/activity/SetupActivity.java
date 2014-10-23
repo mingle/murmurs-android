@@ -12,12 +12,17 @@ import android.widget.Toast;
 
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.thoughtworks.android.Settings;
 import com.thoughtworks.mingle.murmurs.android.R;
+
+import java.util.regex.Pattern;
 
 public class SetupActivity extends Activity {
 
     private static final Logger log = LogOMatic.getLogger(SetupActivity.class);
+    public static final int QR_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,15 +30,21 @@ public class SetupActivity extends Activity {
         setContentView(R.layout.activity_setup);
     }
 
-    public void saveSettings(View view) {
-        Settings settings = Settings.under(getApplicationContext());
-        settings.setUrl(((TextView)findViewById(R.id.project_url)).getText().toString());
-        settings.setEmail(((TextView) findViewById(R.id.email)).getText().toString());
-        settings.setPassword(((TextView) findViewById(R.id.password)).getText().toString());
-        settings.save();
-        Intent intent = new Intent(this, MurmursFeed.class);
-        startActivity(intent);
-        finish();
+    public void scanQrCode(View view) {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.initiateScan();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanResult != null) {
+            String url = scanResult.getContents();
+            System.out.println("URL => " + url);
+            Settings.under(getApplicationContext()).setUrl(url);
+            Intent murmursFeed = new Intent(this, MurmursFeed.class);
+            startActivity(murmursFeed);
+            finish();
+        }
     }
 
     @Override

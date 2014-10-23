@@ -82,7 +82,7 @@ public class PaginatedMurmursCursor extends MatrixCursor {
             log.debug("prepopulating first page or murmurs");
             try {
                 Settings settings = Settings.under(context);
-                Http.success(loadMurmursFromXml()).basicAuth(settings.getEmail(), settings.getPassword()).error(new ResponseHandler() {
+                Http.success(loadMurmursFromXml()).hmacAuth(settings.getAuth()).error(new ResponseHandler() {
                     @Override
                     public void handleResponse(int responseCode, InputStream body) {
                         dataLoadErrorHandler.handleDataLoadError("HTTP " + responseCode);
@@ -91,6 +91,7 @@ public class PaginatedMurmursCursor extends MatrixCursor {
             } catch (Exception e) {
                 dataLoadErrorHandler.handleDataLoadError("Internal error: " + e.getMessage());
             }
+
         }
 
         return this;
