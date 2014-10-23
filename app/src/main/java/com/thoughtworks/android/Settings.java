@@ -2,16 +2,14 @@ package com.thoughtworks.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.dephillipsdesign.logomatic.LogOMatic;
 import com.dephillipsdesign.logomatic.Logger;
+import com.google.common.base.Preconditions;
 import com.thoughtworks.mingle.api.MingleInstance;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Settings {
@@ -28,14 +26,14 @@ public class Settings {
        this.persistentPrefs = existingPreferences;
        this.email = existingPreferences.getString("email", "");
        this.password = existingPreferences.getString("password", "");
-       this.url = existingPreferences.getString("url", "");
+       this.setUrl(existingPreferences.getString("url", ""));
     }
 
     public void save() {
         SharedPreferences.Editor editor = this.persistentPrefs.edit();
         editor.putString("email", this.email);
         editor.putString("password", this.password);
-        editor.putString("url", this.url);
+        editor.putString("url", this.getUrl());
         editor.commit();
     }
 
@@ -46,16 +44,16 @@ public class Settings {
     }
 
     public void setUrl(String url) {
+        Preconditions.checkNotNull(url, "No URL provided");
         this.url = url;
     }
-
     public String getMurmursUrl() {
-        return MingleInstance.at(url).getMurmursUrl();
+        return MingleInstance.at(getUrl()).getMurmursUrl();
     }
 
 
     public String getFallbackIconUrl(String initial) {
-        return MingleInstance.at(url).getAvatarImageUrl(initial.toLowerCase() + ".png");
+        return MingleInstance.at(getUrl()).getAvatarImageUrl(initial.toLowerCase() + ".png");
     };
 
     public String getEmail() {
@@ -67,8 +65,8 @@ public class Settings {
     }
 
    public boolean seemIncomplete() {
-        log.debugf("Settings: URL(%s), email(%s), password(%s)", url, getEmail(), getMaskedPassword());
-        return StringUtils.isBlank(url) || StringUtils.isBlank(getEmail()) || StringUtils.isBlank(getPassword());
+        log.debugf("Settings: URL(%s), email(%s), password(%s)", getUrl(), getEmail(), getMaskedPassword());
+        return StringUtils.isBlank(getUrl()) || StringUtils.isBlank(getEmail()) || StringUtils.isBlank(getPassword());
     }
 
     private String getMaskedPassword() {
@@ -81,5 +79,9 @@ public class Settings {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

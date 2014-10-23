@@ -88,7 +88,6 @@ public class DefaultFetcher implements Fetcher {
 
     private void doGet(String url) {
         try {
-            Preconditions.checkArgument(StringUtils.isNotEmpty(url));
             URI uri = URI.create(url);
 
             log.debug("GET request for " + uri);

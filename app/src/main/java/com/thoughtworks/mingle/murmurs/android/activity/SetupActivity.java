@@ -23,17 +23,43 @@ public class SetupActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+        bindToSettings();
     }
 
     public void saveSettings(View view) {
         Settings settings = Settings.under(getApplicationContext());
-        settings.setUrl(((TextView)findViewById(R.id.project_url)).getText().toString());
-        settings.setEmail(((TextView) findViewById(R.id.email)).getText().toString());
-        settings.setPassword(((TextView) findViewById(R.id.password)).getText().toString());
+        settings.setUrl(getProjectUrlTextView().getText().toString());
+        settings.setEmail(getEmailTextView().getText().toString());
+        settings.setPassword(getPasswordTextView().getText().toString());
         settings.save();
         Intent intent = new Intent(this, MurmursFeed.class);
         startActivity(intent);
         finish();
+    }
+
+    private TextView getPasswordTextView() {
+        return (TextView) findViewById(R.id.password);
+    }
+
+    private TextView getEmailTextView() {
+        return (TextView) findViewById(R.id.email);
+    }
+
+    private TextView getProjectUrlTextView() {
+        return (TextView)findViewById(R.id.project_url);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindToSettings();
+    }
+
+    private void bindToSettings() {
+        Settings settings = Settings.under(getApplicationContext());
+        getProjectUrlTextView().setText(settings.getUrl());
+        getEmailTextView().setText(settings.getEmail());
+        getPasswordTextView().setText(settings.getPassword());
     }
 
     @Override

@@ -36,7 +36,12 @@ public class SplashScreen extends Activity {
             intent = new Intent(this, MurmursFeed.class);
         }
         startActivity(intent);
-        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startActivity(new Intent(this, SetupActivity.class));
     }
 
     @Override
