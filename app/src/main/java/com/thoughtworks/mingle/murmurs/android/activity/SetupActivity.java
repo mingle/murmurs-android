@@ -28,9 +28,9 @@ public class SetupActivity extends Activity {
 
     public void saveSettings(View view) {
         Settings settings = Settings.under(getApplicationContext());
-        settings.setUrl(getProjectUrlTextView().getText().toString());
-        settings.setEmail(getEmailTextView().getText().toString());
-        settings.setPassword(getPasswordTextView().getText().toString());
+        settings.setUrl(getProjectUrlTextView().getText().toString().trim());
+        settings.setEmail(getEmailTextView().getText().toString().trim());
+        settings.setPassword(getPasswordTextView().getText().toString().trim());
         settings.save();
         Intent intent = new Intent(this, MurmursFeed.class);
         startActivity(intent);

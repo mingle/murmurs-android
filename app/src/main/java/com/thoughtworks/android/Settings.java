@@ -26,7 +26,7 @@ public class Settings {
        this.persistentPrefs = existingPreferences;
        this.email = existingPreferences.getString("email", "");
        this.password = existingPreferences.getString("password", "");
-       this.setUrl(existingPreferences.getString("url", ""));
+       this.url = existingPreferences.getString("url", "");
     }
 
     public void save() {
@@ -45,6 +45,7 @@ public class Settings {
 
     public void setUrl(String url) {
         Preconditions.checkNotNull(url, "No URL provided");
+        Preconditions.checkArgument(StringUtils.isNotBlank(url));
         this.url = url;
     }
     public String getMurmursUrl() {
@@ -74,10 +75,14 @@ public class Settings {
     }
 
     public void setPassword(String password) {
+        Preconditions.checkNotNull(password);
+        Preconditions.checkArgument(StringUtils.isNotBlank(password));
         this.password = password;
     }
 
     public void setEmail(String email) {
+        Preconditions.checkNotNull(email);
+        Preconditions.checkArgument(StringUtils.isNotBlank(email));
         this.email = email;
     }
 

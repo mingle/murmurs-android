@@ -15,7 +15,7 @@
         </activity>
         <activity
             android:name=".activity.SetupActivity"
-            android:label="@string/title_activity_setup" >
+            android:label="Mingle Murmurs" >
         </activity>
         <activity
             android:name=".activity.SplashScreen"
@@ -30,7 +30,7 @@
         </activity>
         <activity
             android:name=".activity.CreateMurmur"
-            android:label="@string/title_activity_create_murmur"
+            android:label="Create Murmur"
             android:parentActivityName=".activity.MurmursFeed" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
