@@ -52,28 +52,20 @@ public class MurmursFeed extends ListActivity implements LoaderManager.LoaderCal
     @Override
     protected void onResume() {
         super.onResume();
-        log.debug("onResume");
         fillInData();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list_recent_murmurs);
+    }
 
-        log.debug("onCreate");
-
-
-            fillInData();
-
-
-
+    public void openCreateMurmurActivity(View view) {
+        startActivity(new Intent(this, CreateMurmur.class));
     }
 
     private void fillInData() {
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        getListView().setEmptyView(progressBar);
-
         this.cursorAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.activity_list_single_murmur_summary, null, PaginatedMurmursCursor.COLUMN_NAMES, new int[]{0, R.id.author, R.id.createdAt, R.id.body, R.id.icon}, 0);
         this.cursorAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override

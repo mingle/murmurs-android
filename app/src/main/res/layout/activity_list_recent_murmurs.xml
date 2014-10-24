@@ -10,10 +10,22 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_centerVertical="true"
+        android:layout_height="fill_parent"
+        android:id="@android:id/list"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/murmurPrompt" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/murmurPrompt"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Hi @team I'm using the Android client now..."
+        android:onClick="openCreateMurmurActivity"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
 </RelativeLayout>
